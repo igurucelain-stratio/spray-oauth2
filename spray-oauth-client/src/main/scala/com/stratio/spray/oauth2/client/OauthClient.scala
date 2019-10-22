@@ -102,15 +102,13 @@ trait OauthClient extends HttpService  {
 
   val logout = path("logout") {
     get {
-      optionalCookie(configure.CookieName) {
-        case Some(x) => {
-          removeSession(x.content)
-          deleteCookie(configure.CookieName, path = "/")
-          logoutRedirect
-        }
-        case None => logoutRedirect
-      }
+      logoutRedirect
     }
+  }
+
+  val deleteSessionRemote = path ("deleteCookie"){
+    deleteCookie(configure.CookieName, path = "/")
+    indexRedirect
   }
 
   def getToken(code: String): (String, Long) = {
@@ -145,5 +143,5 @@ trait OauthClient extends HttpService  {
   }
 
 
-  val secRoute = login ~ logout
+  val secRoute = login ~ logout ~ deleteSessionRemote
 }
